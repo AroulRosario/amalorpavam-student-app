@@ -1,66 +1,119 @@
 import { useApp } from '../context/AppContext'
-import { Play, FileText, Zap, Bot, Search } from 'lucide-react'
+import { Search, Play, FileText, Lightbulb, MessageSquare, TrendingUp, BookOpen, Award } from 'lucide-react'
+
+// Tiny performance chart for mobile
+function PerformanceChart({ data }) {
+    const max = Math.max(...data.map(d => d.score))
+    return (
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8, height: 100, padding: '20px 0 10px' }}>
+            {data.map((d, i) => (
+                <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                    <div style={{
+                        width: '100%',
+                        background: i === data.length - 1 ? 'linear-gradient(to top, #1034A6, #4F83EE)' : '#E2E8F0',
+                        height: `${(d.score / max) * 100}%`,
+                        borderRadius: '4px 4px 0 0',
+                        transition: 'height 0.3s ease'
+                    }} />
+                    <span style={{ fontSize: 9, color: '#94A3B8', fontWeight: 700 }}>{d.month}</span>
+                </div>
+            ))}
+        </div>
+    )
+}
 
 export default function MobileLearning() {
-    const { addToast } = useApp()
+    const { content, addToast } = useApp()
 
-    const resources = [
-        { icon: Play, label: 'Video Lectures', color: '#EF4444', count: 24, bg: '#FEE2E2' },
-        { icon: FileText, label: 'Subject Notes', color: '#1E50E2', count: 18, bg: '#E8EFFD' },
-        { icon: Zap, label: 'Flashcards', color: '#F59E0B', count: 150, bg: '#FEF3C7' },
-        { icon: Bot, label: 'AI Tutor', color: '#8B5CF6', count: 'Online', bg: '#EDE9FE' }
+    const studyResources = [
+        { icon: Play, color: '#EF4444', bg: '#FEE2E2', label: 'Video Lectures' },
+        { icon: FileText, color: '#1E50E2', bg: '#E8EFFD', label: 'Study Notes' },
+        { icon: Lightbulb, color: '#F59E0B', bg: '#FEF3C7', label: 'Flashcards' },
+        { icon: MessageSquare, color: '#10B981', bg: '#D1FAE5', label: 'AI Tutor' },
+    ]
+
+    const perfData = [
+        { month: 'Oct', score: 78 }, { month: 'Nov', score: 82 }, { month: 'Dec', score: 85 },
+        { month: 'Jan', score: 89 }, { month: 'Feb', score: 91 }, { month: 'Mar', score: 94 }
     ]
 
     return (
-        <div className="mobile-content">
-            <div className="mobile-header">
-                <div className="mobile-title">Learning Center</div>
-            </div>
+        <div className="mobile-page">
+            <header className="mobile-header">
+                <h2 style={{ fontSize: 20, fontWeight: 800, color: '#0A2463', margin: 0 }}>Learning Hub</h2>
+                <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <TrendingUp size={20} color="#1E50E2" />
+                </div>
+            </header>
 
-            <div className="header-search" style={{ marginBottom: 20 }}>
-                <Search size={16} color="#64748B" />
-                <input placeholder="Search subjects, topics..." style={{ width: '100%' }} />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
-                {resources.map((item, i) => (
-                    <div
-                        key={i}
-                        className="mobile-card"
-                        style={{ textAlign: 'center', cursor: 'pointer' }}
-                        onClick={() => addToast(`Opening ${item.label}...`, 'info')}
-                    >
-                        <div
-                            style={{
-                                width: 48,
-                                height: 48,
-                                borderRadius: 14,
-                                background: item.bg,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                margin: '0 auto 12px',
-                                color: item.color
-                            }}
-                        >
-                            <item.icon size={24} />
-                        </div>
-                        <div style={{ fontWeight: 700, fontSize: 13 }}>{item.label}</div>
-                        <div style={{ fontSize: 10, color: '#64748B', marginTop: 4 }}>{item.count} items</div>
-                    </div>
-                ))}
-            </div>
-
-            <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 12 }}>Recently Viewed</div>
-            <div className="mobile-card" style={{ padding: 12 }}>
-                <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                    <div style={{ width: 40, height: 40, borderRadius: 8, background: '#E8EFFD', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>📄</div>
+            {/* Performance Analytics */}
+            <div style={{ margin: '0 20px 24px', padding: 20, background: 'white', borderRadius: 24, border: '1.5px solid #F1F5F9', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
-                        <div style={{ fontSize: 13, fontWeight: 700 }}>Integration Techniques.pdf</div>
-                        <div style={{ fontSize: 11, color: '#64748B' }}>Mathematics · 2 days ago</div>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: '#64748B', marginBottom: 2 }}>ACADEMIC TREND</div>
+                        <div style={{ fontSize: 18, fontWeight: 900, color: '#0F172A' }}>94.2% Overall</div>
                     </div>
+                    <div style={{ padding: '4px 8px', background: '#D1FAE5', color: '#065F46', borderRadius: 6, fontSize: 10, fontWeight: 800 }}>+3.2% ↑</div>
+                </div>
+                <PerformanceChart data={perfData} />
+            </div>
+
+            {/* Resource Grid */}
+            <div style={{ padding: '0 20px 24px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                    {studyResources.map((res, i) => (
+                        <div key={i} className="module-card" style={{ margin: 0, padding: 20, textAlign: 'center' }} onClick={() => addToast(`Opening ${res.label}...`, 'info')}>
+                            <div style={{ background: res.bg, width: 48, height: 48, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                                <res.icon size={24} color={res.color} />
+                            </div>
+                            <div style={{ fontSize: 13, fontWeight: 800, color: '#0F172A' }}>{res.label}</div>
+                        </div>
+                    ))}
                 </div>
             </div>
+
+            {/* Subject Progress */}
+            <div style={{ padding: '0 20px 24px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                    <h2 style={{ fontSize: 16, fontWeight: 800 }}>Subject Progress</h2>
+                    <span style={{ fontSize: 12, color: '#1E50E2', fontWeight: 700 }}>Curriculum</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                    {[
+                        { sub: 'Mathematics', prog: 85, color: '#1E50E2' },
+                        { sub: 'Physics', prog: 72, color: '#F59E0B' },
+                        { sub: 'Chemistry', prog: 64, color: '#EF4444' }
+                    ].map((s, i) => (
+                        <div key={i} style={{ padding: 16, background: '#F8FAFC', borderRadius: 18, border: '1px solid #E2E8F0' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                    <BookOpen size={16} color={s.color} />
+                                    <span style={{ fontWeight: 800, fontSize: 14 }}>{s.sub}</span>
+                                </div>
+                                <span style={{ fontSize: 12, fontWeight: 800, color: s.color }}>{s.prog}%</span>
+                            </div>
+                            <div style={{ height: 6, background: '#E2E8F0', borderRadius: 3, overflow: 'hidden' }}>
+                                <div style={{ height: '100%', width: `${s.prog}%`, background: s.color, borderRadius: 3 }} />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Quick Quiz CTA */}
+            <div style={{ margin: '0 20px 100px', padding: 20, background: 'linear-gradient(135deg, #10B981, #059669)', borderRadius: 24, color: 'white', display: 'flex', alignItems: 'center', gap: 16 }}>
+                <div style={{ width: 52, height: 52, borderRadius: 16, background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Award size={28} />
+                </div>
+                <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: 800, fontSize: 16 }}>Weekend Mock Test</div>
+                    <div style={{ fontSize: 12, opacity: 0.8 }}>30 Questions · 45 Mins</div>
+                </div>
+                <button style={{ padding: '8px 16px', borderRadius: 10, background: 'white', color: '#059669', border: 'none', fontWeight: 800, fontSize: 12 }}>
+                    Start
+                </button>
+            </div>
+
         </div>
     )
 }

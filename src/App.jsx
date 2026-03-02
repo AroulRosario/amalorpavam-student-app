@@ -7,6 +7,7 @@ import MobileHome from './pages/MobileHome'
 import MobileLearning from './pages/MobileLearning'
 import MobileSchedule from './pages/MobileSchedule'
 import MobileProfile from './pages/MobileProfile'
+import DigitalID from './pages/DigitalID'
 
 // Modals
 import {
@@ -31,19 +32,23 @@ export default function App() {
     const { activePage } = useApp()
 
     // Default to mobile-home if not set or if admin page accidentally triggered
-    const normalizedPage = activePage.startsWith('mobile-') ? activePage : 'mobile-home'
+    const normalizedPage = activePage.startsWith('mobile-') || activePage === 'digital-id' ? activePage : 'mobile-home'
 
     const pageContent = {
         'mobile-home': <MobileHome />,
         'mobile-learning': <MobileLearning />,
         'mobile-schedule': <MobileSchedule />,
         'mobile-profile': <MobileProfile />,
+        'digital-id': <DigitalID />,
     }
+
+    // Hide bottom nav if on Digital ID for a cleaner look
+    const showNav = activePage !== 'digital-id'
 
     return (
         <div className="mobile-shell">
             {pageContent[normalizedPage] || <MobileHome />}
-            <BottomNav />
+            {showNav && <BottomNav />}
             <ModalDispatcher />
             <Toast />
         </div>
