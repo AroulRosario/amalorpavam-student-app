@@ -8,6 +8,7 @@ import MobileHome from './pages/MobileHome'
 import MobileLearning from './pages/MobileLearning'
 import MobileSchedule from './pages/MobileSchedule'
 import MobileProfile from './pages/MobileProfile'
+import MobileCanteen from './pages/MobileCanteen'
 import DigitalID from './pages/DigitalID'
 import CoursePlayer from './pages/CoursePlayer'
 
@@ -36,7 +37,7 @@ export default function App() {
     // Loading screen for 'proper' app feel
     if (loading) {
         return (
-            <div className="mobile-shell" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div className="mobile-shell" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white' }}>
                 <div style={{ textAlign: 'center' }}>
                     <div style={{
                         width: 80, height: 80, background: 'linear-gradient(135deg, #1034A6, #4F83EE)',
@@ -63,6 +64,7 @@ export default function App() {
         'mobile-learning': <MobileLearning />,
         'mobile-schedule': <MobileSchedule />,
         'mobile-profile': <MobileProfile />,
+        'mobile-canteen': <MobileCanteen />,
         'digital-id': <DigitalID />,
         'course-player': <CoursePlayer />,
     }
@@ -70,7 +72,7 @@ export default function App() {
     // Proper Auth Protection
     const activeView = (user || activePage === 'login') ? pageContent[activePage] : <Login />
 
-    // Conditionally show Nav
+    // Conditionally show Nav (Hide on ID and Player for full screen content)
     const showNav = user && activePage !== 'login' && activePage !== 'digital-id' && activePage !== 'course-player'
 
     return (

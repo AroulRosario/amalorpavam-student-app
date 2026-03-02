@@ -14,10 +14,21 @@ export function AppProvider({ children }) {
     const [loading, setLoading] = useState(true)
 
     // --- Gamification ---
-    const [xp, setXp] = useState(1250)
-    const [level, setLevel] = useState(12)
-    const [streak, setStreak] = useState(5)
-    const [points, setPoints] = useState(450)
+    const [xp, setXp] = useState(1340)
+    const [level, setLevel] = useState(13)
+    const [streak, setStreak] = useState(6)
+    const [points, setPoints] = useState(520)
+
+    // --- Canteen & Food Ordering ---
+    const [cart, setCart] = useState([])
+    const [canteenMenu] = useState([
+        { id: 1, name: 'Samosa (2pcs)', price: 25, category: 'Snacks', image: '🥟', stock: 50 },
+        { id: 2, name: 'Veg Sandwich', price: 45, category: 'Meals', image: '🥪', stock: 30 },
+        { id: 3, name: 'Mango Juice', price: 35, category: 'Drinks', image: '🧃', stock: 40 },
+        { id: 4, name: 'Chicken Puffs', price: 30, category: 'Snacks', image: '🥐', stock: 25 },
+        { id: 5, name: 'Curd Rice', price: 55, category: 'Meals', image: '🍚', stock: 20 },
+        { id: 6, name: 'Cold Coffee', price: 50, category: 'Drinks', image: '🧋', stock: 15 },
+    ])
 
     // --- News & Classes (Sync'd from Admin) ---
     const [news, setNews] = useState([
@@ -50,60 +61,35 @@ export function AppProvider({ children }) {
 
     const login = (identifier, password) => {
         setLoading(true)
-
-        // Simulate network delay
         setTimeout(() => {
-            // 1. Check Student Database
             const dbStr = localStorage.getItem(STUDENT_DB_KEY)
             let db = dbStr ? JSON.parse(dbStr) : []
-
-            // 2. HARDCODED FALLBACK (To ensure demo always works)
-            const fallbackUser = {
-                id: 999,
-                name: 'Kavya Nair',
-                email: 'kavya@student.ahss.edu',
-                roll: '04',
-                password: 'password123',
-                class: 'XII-A',
-                avatar: '👩‍🎓'
-            }
-
-            // Merge fallback if not exists
-            if (!db.find(s => s.roll === '04')) {
-                db.push(fallbackUser)
-            }
-
-            // 3. Search for matching student
-            const student = db.find(s =>
-                (s.email?.toLowerCase() === identifier.toLowerCase() || s.roll === identifier) &&
-                s.password === password
-            )
-
+            const fallbackUser = { id: 999, name: 'Kavya Nair', email: 'kavya@student.ahss.edu', roll: '04', password: 'password123', class: 'XII-A', avatar: '👩‍🎓' }
+            if (!db.find(s => s.roll === '04')) db.push(fallbackUser)
+            const student = db.find(s => (s.email?.toLowerCase() === identifier.toLowerCase() || s.roll === identifier) && s.password === password)
             if (student) {
-                // Success
-                setUser(student)
-                localStorage.setItem('amal_active_user', JSON.stringify(student))
-                setActivePage('mobile-home')
-                addToast(`Welcome back, ${student.name}!`, 'success')
+                setUser(student); localStorage.setItem('amal_active_user', JSON.stringify(student)); setActivePage('mobile-home'); addToast(`Welcome back, ${student.name}!`, 'success')
             } else {
-                // Failure
                 addToast('Invalid credentials. Check Email/Roll & Password.', 'error')
             }
             setLoading(false)
         }, 1500)
     }
 
-    const logout = () => {
-        setUser(null)
-        localStorage.removeItem('amal_active_user')
-        setActivePage('login')
-        addToast('Logged out successfully', 'info')
-    }
+    const logout = () => { setUser(null); localStorage.removeItem('amal_active_user'); setActivePage('login'); addToast('Logged out successfully', 'info') }
+    const gainXp = (amount) => { setXp(prev => prev + amount); addToast(`+${amount} XP Gained!`, 'info') }
 
-    const gainXp = (amount) => {
-        setXp(prev => prev + amount)
-        addToast(`+${amount} XP Gained!`, 'info')
+    // --- Cart Handlers ---
+    const addToCart = (item) => {
+        setCart(prev => {
+            const existing = prev.find(i => i.id === item.id)
+            if (existing) return prev.map(i => i.id === item.id ? { ...i, qty: i.qty + 1 } : i)
+            return [...prev, { ...item, qty: 1 }]
+        })
+        addToast(`${item.name} added to cart!`, 'success')
     }
+    const removeFromCart = (id) => setCart(prev => prev.filter(i => i.id !== id))
+    const clearCart = () => setCart([])
 
     return (
         <AppContext.Provider value={{
@@ -112,7 +98,8 @@ export function AppProvider({ children }) {
             activePage, setActivePage,
             toasts, addToast,
             modal, setModal,
-            loading
+            loading,
+            canteenMenu, cart, addToCart, removeFromCart, clearCart
         }}>
             {children}
         </AppContext.Provider>

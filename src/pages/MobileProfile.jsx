@@ -1,87 +1,108 @@
 import { useApp } from '../context/AppContext'
-import { User, CreditCard, Shield, Settings, LogOut, ChevronRight, Bell, Smartphone, Award } from 'lucide-react'
+import { motion } from 'framer-motion'
+import {
+    User, Shield, Bell, CreditCard, LogOut,
+    ChevronRight, Settings, HelpCircle, Moon, Smartphone
+} from 'lucide-react'
 
 export default function MobileProfile() {
-    const { setActivePage, addToast } = useApp()
+    const { user, logout, setActivePage } = useApp()
 
-    const menuItems = [
-        { icon: CreditCard, label: 'Fee Payments', color: '#10B981', bg: '#D1FAE5', action: () => addToast('Opening Fee Portal...', 'info') },
-        { icon: Bell, label: 'Notifications', color: '#1E50E2', bg: '#E8EFFD', action: () => addToast('Notification settings...', 'info') },
-        { icon: Shield, label: 'Security', color: '#F59E0B', bg: '#FEF3C7', action: () => addToast('Security settings...', 'info') },
-        { icon: Settings, label: 'App Settings', color: '#64748B', bg: '#F1F5F9', action: () => addToast('App preferences...', 'info') },
+    const sections = [
+        { label: 'Security & Privacy', icon: Shield, color: '#10B981', bg: '#D1FAE5' },
+        { label: 'Notifications', icon: Bell, color: '#F59E0B', bg: '#FEF3C7' },
+        { label: 'Appearance', icon: Moon, color: '#6366F1', bg: '#EEF2FF' },
+        { label: 'Device Settings', icon: Smartphone, color: '#EC4899', bg: '#FCE7F3' },
+        { label: 'Help & Support', icon: HelpCircle, color: '#64748B', bg: '#F1F5F9' },
     ]
 
     return (
         <div className="mobile-page">
-            <header className="mobile-header">
-                <h2 style={{ fontSize: 20, fontWeight: 800, color: '#0A2463', margin: 0 }}>My Profile</h2>
-                <button className="header-btn" onClick={() => addToast('Logging out...', 'info')}>
-                    <LogOut size={20} />
-                </button>
-            </header>
-
-            {/* Profile Card */}
-            <div style={{ padding: '0 20px 30px', textAlign: 'center' }}>
-                <div style={{ position: 'relative', width: 100, height: 100, margin: '0 auto 16px' }}>
-                    <div style={{ width: 100, height: 100, borderRadius: '50%', background: '#F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40, border: '4px solid white', boxShadow: '0 10px 20px rgba(0,0,0,0.05)' }}>
-                        👩‍🎓
-                    </div>
-                    <div style={{ position: 'absolute', bottom: 0, right: 0, background: '#10B981', width: 28, height: 28, borderRadius: '50%', border: '3px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <div style={{ width: 8, height: 8, background: 'white', borderRadius: '50%' }} />
-                    </div>
-                </div>
-                <h3 style={{ margin: '0 0 4px', fontSize: 22, fontWeight: 900, color: '#0F172A' }}>Kavya Nair</h3>
-                <p style={{ margin: 0, fontSize: 13, color: '#64748B', fontWeight: 600 }}>kavya.nair@student.ahss.edu</p>
-            </div>
-
-            {/* Primary Action: Digital ID (NEW) */}
-            <div style={{ padding: '0 20px 24px' }}>
-                <button
-                    onClick={() => setActivePage('digital-id')}
-                    style={{ width: '100%', padding: '20px', background: 'linear-gradient(135deg, #1034A6, #1E50E2)', borderRadius: 24, border: 'none', color: 'white', display: 'flex', alignItems: 'center', gap: 16, boxShadow: '0 12px 24px rgba(16, 52, 166, 0.15)', cursor: 'pointer' }}
+            {/* Profile Header */}
+            <div style={{ textAlign: 'center', marginBottom: 40, marginTop: 24 }}>
+                <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    style={{ position: 'relative', display: 'inline-block' }}
                 >
-                    <div style={{ background: 'rgba(255,255,255,0.2)', width: 44, height: 44, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Smartphone size={24} />
+                    <div style={{
+                        width: 100, height: 100, borderRadius: 35,
+                        background: 'linear-gradient(135deg, #1034A6, #4F83EE)',
+                        margin: '0 auto 20px', display: 'flex', alignItems: 'center',
+                        justifyContent: 'center', fontSize: 44, boxShadow: '0 20px 40px rgba(16, 52, 166, 0.25)'
+                    }}>
+                        {user?.avatar || '🎓'}
                     </div>
-                    <div style={{ flex: 1, textAlign: 'left' }}>
-                        <div style={{ fontWeight: 800, fontSize: 16 }}>Digital School ID</div>
-                        <div style={{ fontSize: 12, opacity: 0.8 }}>Identity & Campus Access</div>
+                    <div style={{ position: 'absolute', bottom: 15, right: -5, width: 32, height: 32, borderRadius: 10, background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 5px 15px rgba(0,0,0,0.1)' }}>
+                        <Settings size={18} color="#64748B" />
                     </div>
-                    <ChevronRight size={20} />
-                </button>
+                </motion.div>
+                <h2 style={{ fontSize: 26, fontWeight: 900, color: '#0A2463', margin: '0 0 4px' }}>{user?.name || 'Student Name'}</h2>
+                <div style={{ fontSize: 14, color: '#64748B', fontWeight: 600 }}>{user?.class || 'Class XII-A'} · Roll No: {user?.roll || '04'}</div>
             </div>
 
-            {/* Menu List */}
-            <div style={{ padding: '0 20px 100px' }}>
-                <div style={{ background: 'white', borderRadius: 24, border: '1.5px solid #F1F5F9', overflow: 'hidden' }}>
-                    {menuItems.map((item, i) => (
-                        <button
-                            key={i}
-                            onClick={item.action}
-                            style={{ width: '100%', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 16, background: 'transparent', border: 'none', borderBottom: i === menuItems.length - 1 ? 'none' : '1px solid #F1F5F9', cursor: 'pointer' }}
-                        >
-                            <div style={{ background: item.bg, width: 36, height: 36, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <item.icon size={18} color={item.color} />
-                            </div>
-                            <span style={{ flex: 1, textAlign: 'left', fontWeight: 700, fontSize: 14, color: '#0F172A' }}>{item.label}</span>
-                            <ChevronRight size={16} color="#CBD5E1" />
-                        </button>
-                    ))}
-                </div>
-
-                {/* Support Section */}
-                <div style={{ marginTop: 24, padding: '0 8px' }}>
-                    <div style={{ fontSize: 11, fontWeight: 800, color: '#94A3B8', marginBottom: 12, textTransform: 'uppercase' }}>Support & Information</div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 13, fontWeight: 700, color: '#64748B' }}>
-                            <Award size={18} /> Student Code of Conduct
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 13, fontWeight: 700, color: '#64748B' }}>
-                            <Settings size={18} /> Privacy Policy
-                        </div>
+            {/* Digital ID Block */}
+            <motion.div
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setActivePage('digital-id')}
+                className="premium-card"
+                style={{
+                    background: 'linear-gradient(135deg, #0A2463, #1E50E2)',
+                    color: 'white', padding: '24px', cursor: 'pointer', marginBottom: 32,
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+                }}
+            >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+                    <div style={{ width: 50, height: 50, borderRadius: 14, background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <CreditCard size={24} />
+                    </div>
+                    <div>
+                        <div style={{ fontWeight: 850, fontSize: 18 }}>Digital School ID</div>
+                        <div style={{ fontSize: 12, opacity: 0.8, fontWeight: 700 }}>Tap to view QR Code</div>
                     </div>
                 </div>
+                <ChevronRight size={24} />
+            </motion.div>
+
+            {/* Menu Sections */}
+            <h3 style={{ fontSize: 18, fontWeight: 900, marginBottom: 16, color: '#0A2463' }}>Preferences</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 32 }}>
+                {sections.map((s, i) => (
+                    <motion.div
+                        key={i}
+                        whileHover={{ x: 8 }}
+                        className="premium-card"
+                        style={{
+                            display: 'flex', alignItems: 'center', gap: 20,
+                            padding: '16px 20px', cursor: 'pointer'
+                        }}
+                    >
+                        <div style={{ width: 44, height: 44, borderRadius: 12, background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <s.icon size={20} color={s.color} />
+                        </div>
+                        <span style={{ flex: 1, fontWeight: 800, fontSize: 15, color: '#0F172A' }}>{s.label}</span>
+                        <ChevronRight size={18} color="#CBD5E1" />
+                    </motion.div>
+                ))}
             </div>
+
+            {/* Logout */}
+            <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={logout}
+                className="premium-card"
+                style={{
+                    width: '100%', padding: '20px', border: '1.5px solid #FEE2E2',
+                    background: '#FFF1F2', color: '#EF4444', display: 'flex',
+                    alignItems: 'center', justifyContent: 'center', gap: 12,
+                    fontWeight: 900, fontSize: 16, cursor: 'pointer', marginBottom: 40
+                }}
+            >
+                <LogOut size={20} /> Sign Out of Portal
+            </motion.button>
+
+            {/* Bottom Spacer */}
+            <div style={{ height: 40 }} />
         </div>
     )
 }
