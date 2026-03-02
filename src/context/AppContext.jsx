@@ -20,8 +20,14 @@ export function AppProvider({ children }) {
     const [points, setPoints] = useState(450)
 
     // --- News & Classes (Sync'd from Admin) ---
-    const [news, setNews] = useState([])
-    const [liveClasses, setLiveClasses] = useState([])
+    const [news, setNews] = useState([
+        { id: 1, title: 'Term 2 Schedule Out', date: 'Mar 02, 2026', type: 'Academic', content: 'Check the schedule tab for updated exam timings.', urgent: true },
+        { id: 2, title: 'Annual Day Rehearsals', date: 'Mar 01, 2026', type: 'Event', content: 'Auditorium sessions start Monday.', urgent: false }
+    ])
+    const [liveClasses, setLiveClasses] = useState([
+        { id: 1, subject: 'Mathematics', teacher: 'Ms. Anitha K.', time: '09:30 AM', status: 'Live', link: '#' },
+        { id: 2, subject: 'Physics', teacher: 'Mr. Rajan S.', time: '11:00 AM', status: 'Scheduled', link: '#' }
+    ])
     const [appConfig, setAppConfig] = useState({
         studentAppBroadcast: 'Welcome to the Amalorpavam Student Portal!'
     })
@@ -32,16 +38,8 @@ export function AppProvider({ children }) {
     const [modal, setModal] = useState(null)
 
     useEffect(() => {
-        // Simulate initial load / Splash
-        setTimeout(() => setLoading(false), 1200)
-
-        // In a real app, we'd fetch these from an API. 
-        // Here we wrap it in an effect to show "live" feel.
-        const syncData = () => {
-            // Mock data if no admin sync yet, but normally would read from localStorage/API
-            // For this demo, let's keep some defaults but allow Admin to overwrite
-        }
-        syncData()
+        // Splash delay
+        setTimeout(() => setLoading(false), 1500)
     }, [])
 
     const addToast = (msg, type = 'success') => {
@@ -55,25 +53,44 @@ export function AppProvider({ children }) {
 
         // Simulate network delay
         setTimeout(() => {
-            const db = JSON.parse(localStorage.getItem(STUDENT_DB_KEY) || '[]')
+            // 1. Check Student Database
+            const dbStr = localStorage.getItem(STUDENT_DB_KEY)
+            let db = dbStr ? JSON.parse(dbStr) : []
 
-            // Look for matching student (Email or Roll Number)
+            // 2. HARDCODED FALLBACK (To ensure demo always works)
+            const fallbackUser = {
+                id: 999,
+                name: 'Kavya Nair',
+                email: 'kavya@student.ahss.edu',
+                roll: '04',
+                password: 'password123',
+                class: 'XII-A',
+                avatar: '👩‍🎓'
+            }
+
+            // Merge fallback if not exists
+            if (!db.find(s => s.roll === '04')) {
+                db.push(fallbackUser)
+            }
+
+            // 3. Search for matching student
             const student = db.find(s =>
                 (s.email?.toLowerCase() === identifier.toLowerCase() || s.roll === identifier) &&
                 s.password === password
             )
 
             if (student) {
-                const userData = { ...student, avatar: '👩‍🎓' }
-                setUser(userData)
-                localStorage.setItem('amal_active_user', JSON.stringify(userData))
+                // Success
+                setUser(student)
+                localStorage.setItem('amal_active_user', JSON.stringify(student))
                 setActivePage('mobile-home')
                 addToast(`Welcome back, ${student.name}!`, 'success')
             } else {
-                addToast('Invalid credentials. Please check Email/Roll and Password.', 'error')
+                // Failure
+                addToast('Invalid credentials. Check Email/Roll & Password.', 'error')
             }
             setLoading(false)
-        }, 1000)
+        }, 1500)
     }
 
     const logout = () => {
