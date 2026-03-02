@@ -1,129 +1,147 @@
 import { useApp } from '../context/AppContext'
-import { Bell, Search, Star, Clock, ChevronRight, Video, Megaphone, Zap, GraduationCap } from 'lucide-react'
+import { Bell, Flame, Trophy, Star, Clock, ChevronRight, Video, Megaphone, Zap, GraduationCap, PlayCircle } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 export default function MobileHome() {
-    const { news, liveClasses, appConfig, homework, addToast } = useApp()
+    const { news, liveClasses, appConfig, user, xp, level, streak, points, addToast, setActivePage } = useApp()
 
     return (
         <div className="mobile-page">
-            {/* Header */}
-            <header className="mobile-header">
-                <div>
-                    <h1 style={{ fontSize: 22, fontWeight: 800, color: '#0A2463', margin: 0 }}>Hello, Kavya 👋</h1>
-                    <p style={{ fontSize: 13, color: '#64748B', margin: 0 }}>Class XII-A · Rank #1</p>
+            {/* Header with Profile & XP */}
+            <header className="mobile-header" style={{ alignItems: 'flex-start', paddingBottom: 10 }}>
+                <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                    <div style={{ width: 48, height: 48, borderRadius: 16, background: '#F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, border: '2px solid white', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
+                        {user?.avatar || '👩‍🎓'}
+                    </div>
+                    <div>
+                        <h1 style={{ fontSize: 18, fontWeight: 900, color: '#0A2463', margin: 0 }}>Hi, {user?.name.split(' ')[0] || 'Student'}!</h1>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
+                            <div style={{ background: '#E0F2FE', color: '#0369A1', fontSize: 10, fontWeight: 800, padding: '2px 6px', borderRadius: 4 }}>LEVEL {level}</div>
+                            <div style={{ fontSize: 11, color: '#94A3B8', fontWeight: 700 }}>{xp} XP</div>
+                        </div>
+                    </div>
                 </div>
-                <button className="header-btn" onClick={() => addToast('3 new notifications', 'info')}>
-                    <Bell size={20} />
-                    <div className="notif-dot" />
-                </button>
+                <div style={{ display: 'flex', gap: 8 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, background: '#FFF7ED', color: '#EA580C', padding: '8px 12px', borderRadius: 14, fontWeight: 800, fontSize: 13, border: '1px solid #FFEDD5' }}>
+                        <Flame size={16} fill="#EA580C" /> {streak}
+                    </div>
+                    <button className="header-btn" onClick={() => addToast('Notifications coming soon', 'info')}>
+                        <Bell size={20} />
+                        <div className="notif-dot" />
+                    </button>
+                </div>
             </header>
 
-            {/* Admin Broadcast Ticker */}
-            <div style={{ background: 'linear-gradient(90deg, #1034A6, #1E50E2)', padding: '10px 16px', margin: '0 20px 20px', borderRadius: 12, overflow: 'hidden', display: 'flex', alignItems: 'center', gap: 10 }}>
-                <Megaphone size={16} color="white" />
-                <div style={{ whiteSpace: 'nowrap', color: 'white', fontSize: 13, fontWeight: 700, animation: 'ticker 15s linear infinite' }}>
-                    {appConfig.studentAppBroadcast} — {appConfig.studentAppBroadcast}
+            {/* XP Progress Bar */}
+            <div style={{ padding: '0 24px 24px' }}>
+                <div style={{ height: 6, background: '#E2E8F0', borderRadius: 3, overflow: 'hidden', position: 'relative' }}>
+                    <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: '65%' }}
+                        style={{ position: 'absolute', top: 0, left: 0, height: '100%', background: 'linear-gradient(90deg, #1034A6, #4F83EE)', borderRadius: 3 }}
+                    />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6, fontSize: 10, fontWeight: 800, color: '#94A3B8' }}>
+                    <span>650 XP TO LEVEL {level + 1}</span>
+                    <span>75%</span>
                 </div>
             </div>
 
-            <style>{`
-        @keyframes ticker {
-          0% { transform: translateX(100%); }
-          100% { transform: translateX(-100%); }
-        }
-      `}</style>
-
-            {/* Main Stats Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, padding: '0 20px 20px' }}>
-                <div style={{ padding: 16, background: '#E8EFFD', borderRadius: 20, border: '1.5px solid #D1E0FB' }}>
-                    <div style={{ background: 'white', width: 32, height: 32, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
-                        <Star size={18} color="#1E50E2" />
-                    </div>
-                    <div style={{ fontSize: 24, fontWeight: 900, color: '#1E50E2' }}>94%</div>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: '#64748B' }}>Attendance</div>
+            {/* Admin Broadcast Card */}
+            <motion.div
+                whileTap={{ scale: 0.98 }}
+                style={{
+                    margin: '0 24px 24px', padding: '16px 20px',
+                    background: 'linear-gradient(135deg, #1034A6, #0A2463)',
+                    borderRadius: 24, color: 'white', position: 'relative', overflow: 'hidden',
+                    boxShadow: '0 15px 30px rgba(10, 36, 99, 0.15)'
+                }}
+            >
+                <div style={{ position: 'absolute', right: -20, top: -20, opacity: 0.1 }}><Megaphone size={100} /></div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                    <div style={{ background: 'rgba(255,255,255,0.2)', padding: '4px 8px', borderRadius: 6, fontSize: 10, fontWeight: 800 }}>CAMPUS NEWS</div>
                 </div>
-                <div style={{ padding: 16, background: '#FEF3C7', borderRadius: 20, border: '1.5px solid #FDE68A' }}>
-                    <div style={{ background: 'white', width: 32, height: 32, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
-                        <Zap size={18} color="#D97706" />
+                <p style={{ margin: 0, fontSize: 14, fontWeight: 700, lineHeight: 1.5 }}>
+                    {appConfig.studentAppBroadcast}
+                </p>
+            </motion.div>
+
+            {/* Continue Learning */}
+            <div style={{ padding: '0 24px 24px' }}>
+                <h2 style={{ fontSize: 18, fontWeight: 900, marginBottom: 16 }}>Continue Learning</h2>
+                <div style={{ padding: 20, background: 'white', borderRadius: 24, border: '1.5px solid #F1F5F9', display: 'flex', gap: 16, alignItems: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}>
+                    <div style={{ width: 56, height: 56, borderRadius: 16, background: '#E8EFFD', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1E50E2' }}>
+                        <PlayCircle size={32} fill="#1E50E2" color="white" />
                     </div>
-                    <div style={{ fontSize: 24, fontWeight: 900, color: '#D97706' }}>120</div>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: '#64748B' }}>Activity Pts</div>
+                    <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: 12, fontWeight: 800, color: '#1E50E2', marginBottom: 2 }}>MATHEMATICS · LEVEL 12</div>
+                        <div style={{ fontSize: 15, fontWeight: 800, color: '#0F172A' }}>Calculus: Unit 4 Review</div>
+                        <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 4 }}>24 mins remaining</div>
+                    </div>
+                    <ChevronRight size={20} color="#CBD5E1" />
                 </div>
             </div>
 
-            {/* Live Classes (Admin Managed) */}
-            <div style={{ padding: '0 20px 24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                    <h2 style={{ fontSize: 16, fontWeight: 800 }}>Live & Scheduled</h2>
-                    <span style={{ fontSize: 12, color: '#1E50E2', fontWeight: 700 }}>View All</span>
+            {/* Live Classes Grid */}
+            <div style={{ padding: '0 24px 24px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                    <h2 style={{ fontSize: 18, fontWeight: 900 }}>Live Sessions</h2>
+                    <span style={{ fontSize: 12, color: '#1E50E2', fontWeight: 800 }}>Join All</span>
                 </div>
-                <div style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 4 }}>
+                <div style={{ display: 'flex', gap: 16, overflowX: 'auto', paddingBottom: 10, margin: '0 -24px', paddingLeft: 24 }}>
                     {liveClasses.map(c => (
                         <motion.div
                             key={c.id}
                             whileTap={{ scale: 0.96 }}
-                            style={{ flex: '0 0 240px', padding: 16, background: 'white', borderRadius: 20, border: '1.5px solid #E2E8F0', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}
+                            style={{ flex: '0 0 280px', padding: 20, background: 'white', borderRadius: 28, border: '1.5px solid #F1F5F9', boxShadow: '0 10px 25px rgba(0,0,0,0.03)' }}
                         >
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
-                                <div style={{ background: c.status === 'Live' ? '#FEE2E2' : '#F1F5F9', color: c.status === 'Live' ? '#EF4444' : '#64748B', padding: '4px 8px', borderRadius: 6, fontSize: 10, fontWeight: 800 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+                                <div style={{ background: c.status === 'Live' ? '#FEE2E2' : '#F1F5F9', color: c.status === 'Live' ? '#EF4444' : '#64748B', padding: '6px 12px', borderRadius: 10, fontSize: 10, fontWeight: 900, letterSpacing: 0.5 }}>
                                     {c.status.toUpperCase()}
                                 </div>
-                                <div style={{ color: '#94A3B8' }}><Clock size={14} /></div>
+                                {c.status === 'Live' && (
+                                    <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#EF4444', animation: 'pulse 1.5s infinite' }} />
+                                )}
                             </div>
-                            <div style={{ fontWeight: 800, fontSize: 16, color: '#0F172A', marginBottom: 4 }}>{c.subject}</div>
-                            <div style={{ fontSize: 12, color: '#64748B', marginBottom: 16 }}>{c.teacher} · {c.time}</div>
-                            <button disabled={c.status !== 'Live'} style={{ width: '100%', padding: '10px', borderRadius: 12, background: c.status === 'Live' ? '#1E50E2' : '#E2E8F0', color: 'white', border: 'none', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, cursor: 'pointer' }}>
-                                <Video size={16} /> {c.status === 'Live' ? 'Join Now' : 'Starts Soon'}
+                            <h3 style={{ margin: '0 0 6px', fontSize: 18, fontWeight: 900 }}>{c.subject}</h3>
+                            <p style={{ margin: '0 0 20px', fontSize: 13, color: '#64748B', fontWeight: 600 }}>{c.teacher} · {c.time}</p>
+                            <button style={{
+                                width: '100%', padding: '12px', borderRadius: 16,
+                                background: c.status === 'Live' ? '#1E50E2' : '#F1F5F9',
+                                color: c.status === 'Live' ? 'white' : '#64748B',
+                                border: 'none', fontWeight: 800, fontSize: 14,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer'
+                            }}>
+                                <Video size={18} /> {c.status === 'Live' ? 'Join Now' : 'Reminder Set'}
                             </button>
                         </motion.div>
                     ))}
                 </div>
             </div>
 
-            {/* News Feed (Admin Managed) */}
-            <div style={{ padding: '0 20px 24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                    <h2 style={{ fontSize: 16, fontWeight: 800 }}>Notice Board</h2>
-                    <span style={{ fontSize: 12, color: '#1E50E2', fontWeight: 700 }}>More</span>
-                </div>
+            {/* Quick Actions Feed */}
+            <div style={{ padding: '0 24px 40px' }}>
+                <h2 style={{ fontSize: 18, fontWeight: 900, marginBottom: 16 }}>Daily Missions</h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                    {news.map(n => (
-                        <div key={n.id} style={{ display: 'flex', gap: 12, padding: 12, background: n.urgent ? '#FFF7ED' : 'white', borderRadius: 18, border: n.urgent ? '1.5px solid #FFEDD5' : '1.5px solid #F1F5F9' }}>
-                            <div style={{ width: 44, height: 44, borderRadius: 12, background: n.urgent ? '#FFEDD5' : '#F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: n.urgent ? '#EA580C' : '#64748B', flexShrink: 0 }}>
-                                {n.type === 'Sports' ? '🏅' : n.type === 'Event' ? '🗓️' : '📢'}
+                    {[
+                        { icon: Star, bg: '#FEF3C7', color: '#D97706', label: 'Solve Daily Math Quiz', xp: '+50 XP' },
+                        { icon: Zap, bg: '#E0F2FE', color: '#0369A1', label: 'Watch Unit 4 Lecture', xp: '+100 XP' },
+                        { icon: Trophy, bg: '#D1FAE5', color: '#059669', label: 'Score 90% in Chem Quiz', xp: '+250 XP' },
+                    ].map((m, i) => (
+                        <div key={i} style={{ padding: 16, background: 'white', borderRadius: 20, border: '1.5px solid #F1F5F9', display: 'flex', alignItems: 'center', gap: 16 }}>
+                            <div style={{ width: 44, height: 44, borderRadius: 12, background: m.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', color: m.color }}>
+                                <m.icon size={22} />
                             </div>
-                            <div style={{ flex: 1 }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
-                                    <span style={{ fontSize: 10, fontWeight: 800, color: n.urgent ? '#EA580C' : '#94A3B8', textTransform: 'uppercase' }}>{n.type}</span>
-                                    <span style={{ fontSize: 10, color: '#94A3B8' }}>{n.date}</span>
-                                </div>
-                                <div style={{ fontWeight: 800, fontSize: 14, color: '#0F172A', marginBottom: 4 }}>{n.title}</div>
-                                <div style={{ fontSize: 12, color: '#64748B', lineHeight: 1.4 }}>{n.content}</div>
-                            </div>
+                            <div style={{ flex: 1, fontWeight: 800, fontSize: 14 }}>{m.label}</div>
+                            <div style={{ fontSize: 12, fontWeight: 900, color: m.color }}>{m.xp}</div>
                         </div>
                     ))}
                 </div>
             </div>
 
-            {/* Student of the Month */}
-            <div style={{ margin: '0 20px 100px', padding: 20, background: 'linear-gradient(135deg, #FFD700, #F59E0B)', borderRadius: 24, color: 'white', position: 'relative', overflow: 'hidden' }}>
-                <div style={{ position: 'relative', zIndex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-                        <div style={{ background: 'rgba(255,255,255,0.3)', borderRadius: 8, padding: '4px 8px', fontSize: 10, fontWeight: 800 }}>🏆 STAR STUDENT</div>
-                    </div>
-                    <h3 style={{ margin: 0, fontSize: 20, fontWeight: 900 }}>Kavya Nair</h3>
-                    <p style={{ margin: 0, fontSize: 13, opacity: 0.9, fontWeight: 600 }}>Consistent Academic Excellence & Leadership</p>
-                    <div style={{ marginTop: 16, display: 'flex', gap: 8 }}>
-                        <span style={{ fontSize: 10, background: 'rgba(0,0,0,0.1)', padding: '4px 8px', borderRadius: 4 }}>Class XII-A</span>
-                        <span style={{ fontSize: 10, background: 'rgba(0,0,0,0.1)', padding: '4px 8px', borderRadius: 4 }}>GPA 4.0</span>
-                    </div>
-                </div>
-                <div style={{ position: 'absolute', right: -10, bottom: -10, opacity: 0.2 }}>
-                    <GraduationCap size={120} />
-                </div>
-            </div>
-
+            <style>{`
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+      `}</style>
         </div>
     )
 }
