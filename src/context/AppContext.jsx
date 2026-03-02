@@ -2,9 +2,15 @@ import { createContext, useContext, useState, useEffect } from 'react'
 
 const AppContext = createContext()
 
+// Shared key for cross-app "database" simulation
+const STUDENT_DB_KEY = 'amal_student_db'
+
 export function AppProvider({ children }) {
     // --- Auth & User State ---
-    const [user, setUser] = useState(null) // null = not logged in
+    const [user, setUser] = useState(() => {
+        const saved = localStorage.getItem('amal_active_user')
+        return saved ? JSON.parse(saved) : null
+    })
     const [loading, setLoading] = useState(true)
 
     // --- Gamification ---
@@ -13,38 +19,29 @@ export function AppProvider({ children }) {
     const [streak, setStreak] = useState(5)
     const [points, setPoints] = useState(450)
 
-    // --- Mock Data ---
-    const [students] = useState([
-        { id: 1, name: 'Kavya Nair', class: 'XII-A', roll: '04', fee: 'Paid', status: 'Active' },
-    ])
-
-    const [news, setNews] = useState([
-        { id: 1, title: 'School Reopens after Holidays', date: 'Mar 01, 2026', type: 'General', content: 'We welcome all students back for the new term!', urgent: true },
-        { id: 2, title: 'Volleyball District Champions!', date: 'Feb 28, 2026', type: 'Sports', content: 'Our senior boys team clinced the trophy.', image: true },
-    ])
-
-    const [liveClasses, setLiveClasses] = useState([
-        { id: 1, subject: 'Mathematics', teacher: 'Ms. Anitha K.', time: '09:30 AM', status: 'Live', link: '#' },
-        { id: 2, subject: 'Physics', teacher: 'Mr. Rajan S.', time: '11:00 AM', status: 'Scheduled', link: '#' }
-    ])
-
-    const [homework, setHomework] = useState([
-        { id: 1, sub: 'Mathematics', topic: 'Exercise 8.2', deadline: 'Mar 04', done: false },
-        { id: 2, sub: 'Physics', topic: 'Ray Diagrams', deadline: 'Mar 05', done: true },
-    ])
-
-    const [appConfig] = useState({
-        studentAppBroadcast: 'Final Exams start in 15 days! Keep pushing! 🔥'
+    // --- News & Classes (Sync'd from Admin) ---
+    const [news, setNews] = useState([])
+    const [liveClasses, setLiveClasses] = useState([])
+    const [appConfig, setAppConfig] = useState({
+        studentAppBroadcast: 'Welcome to the Amalorpavam Student Portal!'
     })
 
     // --- UI State ---
-    const [activePage, setActivePage] = useState('login')
+    const [activePage, setActivePage] = useState(user ? 'mobile-home' : 'login')
     const [toasts, setToasts] = useState([])
     const [modal, setModal] = useState(null)
 
     useEffect(() => {
-        // Simulate initial load
-        setTimeout(() => setLoading(false), 1000)
+        // Simulate initial load / Splash
+        setTimeout(() => setLoading(false), 1200)
+
+        // In a real app, we'd fetch these from an API. 
+        // Here we wrap it in an effect to show "live" feel.
+        const syncData = () => {
+            // Mock data if no admin sync yet, but normally would read from localStorage/API
+            // For this demo, let's keep some defaults but allow Admin to overwrite
+        }
+        syncData()
     }, [])
 
     const addToast = (msg, type = 'success') => {
@@ -53,18 +50,35 @@ export function AppProvider({ children }) {
         setTimeout(() => setToasts(t => t.filter(x => x.id !== id)), 3000)
     }
 
-    const login = (email, password) => {
+    const login = (identifier, password) => {
         setLoading(true)
+
+        // Simulate network delay
         setTimeout(() => {
-            setUser({ name: 'Kavya Nair', email: 'kavya.nair@student.ahss.edu', avatar: '👩‍🎓' })
-            setActivePage('mobile-home')
+            const db = JSON.parse(localStorage.getItem(STUDENT_DB_KEY) || '[]')
+
+            // Look for matching student (Email or Roll Number)
+            const student = db.find(s =>
+                (s.email?.toLowerCase() === identifier.toLowerCase() || s.roll === identifier) &&
+                s.password === password
+            )
+
+            if (student) {
+                const userData = { ...student, avatar: '👩‍🎓' }
+                setUser(userData)
+                localStorage.setItem('amal_active_user', JSON.stringify(userData))
+                setActivePage('mobile-home')
+                addToast(`Welcome back, ${student.name}!`, 'success')
+            } else {
+                addToast('Invalid credentials. Please check Email/Roll and Password.', 'error')
+            }
             setLoading(false)
-            addToast('Welcome back, Kavya!', 'success')
-        }, 1500)
+        }, 1000)
     }
 
     const logout = () => {
         setUser(null)
+        localStorage.removeItem('amal_active_user')
         setActivePage('login')
         addToast('Logged out successfully', 'info')
     }
@@ -77,7 +91,7 @@ export function AppProvider({ children }) {
     return (
         <AppContext.Provider value={{
             user, login, logout, xp, level, streak, points, gainXp,
-            news, liveClasses, homework, appConfig,
+            news, liveClasses, appConfig,
             activePage, setActivePage,
             toasts, addToast,
             modal, setModal,
