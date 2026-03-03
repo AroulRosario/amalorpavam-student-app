@@ -1,19 +1,26 @@
+import { useState } from 'react'
 import { useApp } from '../context/AppContext'
 import { motion } from 'framer-motion'
 import {
     User, Shield, Bell, CreditCard, LogOut,
     ChevronRight, Settings, HelpCircle, Moon, Smartphone
 } from 'lucide-react'
+import MobileSettings from './MobileSettings'
 
 export default function MobileProfile() {
     const { user, logout, setActivePage } = useApp()
+    const [activeSegment, setActiveSegment] = useState(null)
+
+    if (activeSegment) {
+        return <MobileSettings type={activeSegment} onBack={() => setActiveSegment(null)} />
+    }
 
     const sections = [
-        { label: 'Security & Privacy', icon: Shield, color: '#10B981', bg: '#D1FAE5' },
-        { label: 'Notifications', icon: Bell, color: '#F59E0B', bg: '#FEF3C7' },
-        { label: 'Appearance', icon: Moon, color: '#6366F1', bg: '#EEF2FF' },
-        { label: 'Device Settings', icon: Smartphone, color: '#EC4899', bg: '#FCE7F3' },
-        { label: 'Help & Support', icon: HelpCircle, color: '#64748B', bg: '#F1F5F9' },
+        { id: 'security', label: 'Security & Privacy', icon: Shield, color: '#10B981', bg: '#D1FAE5' },
+        { id: 'notifications', label: 'Notifications', icon: Bell, color: '#F59E0B', bg: '#FEF3C7' },
+        { id: 'appearance', label: 'Appearance', icon: Moon, color: '#6366F1', bg: '#EEF2FF' },
+        { id: 'device', label: 'Device Settings', icon: Smartphone, color: '#EC4899', bg: '#FCE7F3' },
+        { id: 'help', label: 'Help & Support', icon: HelpCircle, color: '#64748B', bg: '#F1F5F9' },
     ]
 
     return (
@@ -88,7 +95,8 @@ export default function MobileProfile() {
                 {sections.map((s, i) => (
                     <motion.div
                         key={i}
-                        whileHover={{ x: 8 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => s.id !== 'help' ? setActiveSegment(s.id) : alert('Help center coming soon!')}
                         className="premium-card"
                         style={{
                             display: 'flex', alignItems: 'center', gap: 20,
@@ -118,7 +126,6 @@ export default function MobileProfile() {
             >
                 <LogOut size={20} /> Sign Out of Portal
             </motion.button>
-
         </div>
     )
 }

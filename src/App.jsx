@@ -13,6 +13,7 @@ import MobileCanteen from './pages/MobileCanteen'
 import MobileHomework from './pages/MobileHomework'
 import DigitalID from './pages/DigitalID'
 import CoursePlayer from './pages/CoursePlayer'
+import MobileSettings from './pages/MobileSettings'
 
 // Modals
 import {
@@ -70,6 +71,7 @@ export default function App() {
         'mobile-homework': <MobileHomework />,
         'digital-id': <DigitalID />,
         'course-player': <CoursePlayer />,
+        'mobile-settings': <MobileSettings />,
     }
 
     // Proper Auth Protection

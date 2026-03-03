@@ -6,7 +6,7 @@ import {
 } from 'lucide-react'
 
 export default function MobileHome() {
-    const { user, xp, level, streak, news, appConfig, setActivePage, gainXp } = useApp()
+    const { user, xp, level, streak, news, appConfig, setActivePage, gainXp, addToast } = useApp()
 
     const nextLevelXp = 2000
     const progress = (xp / nextLevelXp) * 100
@@ -99,7 +99,7 @@ export default function MobileHome() {
             <div style={{ marginBottom: 32 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                     <h3 style={{ fontSize: 18, fontWeight: 900, margin: 0, color: '#0A2463' }}>Academic Alerts</h3>
-                    <span style={{ fontSize: 12, color: '#1E50E2', fontWeight: 800, cursor: 'pointer' }}>View All</span>
+                    <span onClick={() => addToast('Loading all academic alerts...', 'info')} style={{ fontSize: 12, color: '#1E50E2', fontWeight: 800, cursor: 'pointer' }}>View All</span>
                 </div>
                 <div className="premium-card" style={{ background: '#0A2463', color: 'white', padding: '16px 20px' }}>
                     <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
@@ -145,7 +145,10 @@ export default function MobileHome() {
             </div>
 
             {/* Daily Missions */}
-            <h3 style={{ fontSize: 18, fontWeight: 900, marginBottom: 16, color: '#0A2463' }}>Daily Missions</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <h3 style={{ fontSize: 18, fontWeight: 900, margin: 0, color: '#0A2463' }}>Daily Missions</h3>
+                <span onClick={() => addToast('Opening full missions board...', 'info')} style={{ fontSize: 12, color: '#1E50E2', fontWeight: 800, cursor: 'pointer' }}>View All</span>
+            </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {[
                     { id: 1, task: 'Complete Unit 4 Quiz', xp: 150, done: false },
