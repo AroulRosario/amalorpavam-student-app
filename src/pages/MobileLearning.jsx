@@ -102,8 +102,6 @@ export default function MobileLearning() {
                 ))}
             </div>
 
-            {/* Bottom Spacer */}
-            <div style={{ height: 40 }} />
         </div>
     )
 }

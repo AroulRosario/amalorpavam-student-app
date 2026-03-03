@@ -1,6 +1,7 @@
 import { useApp } from './context/AppContext'
 import Toast from './components/Toast'
 import BottomNav from './components/BottomNav'
+import DesktopSidebar from './components/DesktopSidebar'
 
 // Pages
 import Login from './pages/Login'
@@ -9,6 +10,7 @@ import MobileLearning from './pages/MobileLearning'
 import MobileSchedule from './pages/MobileSchedule'
 import MobileProfile from './pages/MobileProfile'
 import MobileCanteen from './pages/MobileCanteen'
+import MobileHomework from './pages/MobileHomework'
 import DigitalID from './pages/DigitalID'
 import CoursePlayer from './pages/CoursePlayer'
 
@@ -65,6 +67,7 @@ export default function App() {
         'mobile-schedule': <MobileSchedule />,
         'mobile-profile': <MobileProfile />,
         'mobile-canteen': <MobileCanteen />,
+        'mobile-homework': <MobileHomework />,
         'digital-id': <DigitalID />,
         'course-player': <CoursePlayer />,
     }
@@ -77,7 +80,10 @@ export default function App() {
 
     return (
         <div className="mobile-shell">
-            {activeView || <MobileHome />}
+            <DesktopSidebar />
+            <div className="main-content-area" style={{ width: '100%', height: '100%', overflowY: 'auto' }}>
+                {activeView || <MobileHome />}
+            </div>
             {showNav && <BottomNav />}
             <ModalDispatcher />
             <Toast />

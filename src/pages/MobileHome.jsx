@@ -123,6 +123,16 @@ export default function MobileHome() {
                     <div style={{ fontWeight: 800, fontSize: 15 }}>Learning Hub</div>
                 </motion.div>
                 <motion.div
+                    onClick={() => setActivePage('mobile-homework')}
+                    className="premium-card"
+                    style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 12, cursor: 'pointer' }}
+                >
+                    <div style={{ width: 44, height: 44, borderRadius: 14, background: '#FDF2F8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <CheckCircle2 size={20} color="#DB2777" />
+                    </div>
+                    <div style={{ fontWeight: 800, fontSize: 15 }}>Homework</div>
+                </motion.div>
+                <motion.div
                     onClick={() => setActivePage('mobile-canteen')}
                     className="premium-card"
                     style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 12, cursor: 'pointer' }}
@@ -162,8 +172,6 @@ export default function MobileHome() {
                 ))}
             </div>
 
-            {/* Bottom Padding for Nav */}
-            <div style={{ height: 40 }} />
         </div>
     )
 }

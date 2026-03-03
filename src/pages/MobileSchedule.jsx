@@ -95,8 +95,6 @@ export default function MobileSchedule() {
                 ))}
             </div>
 
-            {/* Bottom Spacer */}
-            <div style={{ height: 40 }} />
         </div>
     )
 }

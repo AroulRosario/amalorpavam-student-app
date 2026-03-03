@@ -38,7 +38,25 @@ export default function MobileProfile() {
                     </div>
                 </motion.div>
                 <h2 style={{ fontSize: 26, fontWeight: 900, color: '#0A2463', margin: '0 0 4px' }}>{user?.name || 'Student Name'}</h2>
-                <div style={{ fontSize: 14, color: '#64748B', fontWeight: 600 }}>{user?.class || 'Class XII-A'} · Roll No: {user?.roll || '04'}</div>
+                <div style={{ fontSize: 14, color: '#64748B', fontWeight: 600, marginBottom: 24 }}>{user?.class || 'Class XII-A'} · Roll No: {user?.roll || '04'}</div>
+            </div>
+
+            {/* Live Stats Block (Real-time Sync) */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 32 }}>
+                <div className="premium-card" style={{ padding: '16px', textAlign: 'center' }}>
+                    <div style={{ fontSize: 10, fontWeight: 800, color: '#64748B', textTransform: 'uppercase', marginBottom: 8 }}>Fee Status</div>
+                    <span style={{
+                        padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 900,
+                        background: user?.fee === 'Paid' ? '#D1FAE5' : user?.fee === 'Pending' ? '#FEF3C7' : '#FEE2E2',
+                        color: user?.fee === 'Paid' ? '#059669' : user?.fee === 'Pending' ? '#D97706' : '#DC2626'
+                    }}>
+                        {user?.fee || 'Loading...'}
+                    </span>
+                </div>
+                <div className="premium-card" style={{ padding: '16px', textAlign: 'center' }}>
+                    <div style={{ fontSize: 10, fontWeight: 800, color: '#64748B', textTransform: 'uppercase', marginBottom: 8 }}>Attendance</div>
+                    <div style={{ fontWeight: 900, fontSize: 20, color: '#1034A6' }}>{user?.attendance || '--'}%</div>
+                </div>
             </div>
 
             {/* Digital ID Block */}
@@ -101,8 +119,6 @@ export default function MobileProfile() {
                 <LogOut size={20} /> Sign Out of Portal
             </motion.button>
 
-            {/* Bottom Spacer */}
-            <div style={{ height: 40 }} />
         </div>
     )
 }

@@ -45,7 +45,9 @@ body {
   margin: 0;
   min-height: 100vh;
   position: relative;
-  padding-bottom: 110px;
+  /* Extra space for floating bottom nav on mobile */
+  padding-bottom: 130px;
+  background: var(--bg-main);
 }
 
 .mobile-page {
@@ -248,4 +250,198 @@ body {
   margin-bottom: 12px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* --- Desktop Dashboard Layout (v4) --- */
+@media (min-width: 1024px) {
+  .mobile-shell {
+    display: grid !important;
+    grid-template-columns: 280px 1fr !important;
+    max-width: 100% !important;
+    height: 100vh !important;
+    overflow: hidden !important;
+    background: #f8fafc !important;
+    padding-bottom: 0 !important;
+    /* No bottom nav on desktop */
+  }
+
+  .mobile-page {
+    height: 100vh !important;
+    overflow-y: auto !important;
+    padding: 32px 48px !important;
+    border-radius: 0 !important;
+  }
+
+  .bottom-nav {
+    display: none !important;
+  }
+}
+
+.desktop-sidebar {
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  padding: 32px 20px;
+  color: white;
+  z-index: 100;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 48px;
+  padding: 0 12px;
+}
+
+.sidebar-logo {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #1034A6, #1E50E2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 16px rgba(16, 52, 166, 0.3);
+}
+
+.sidebar-brand h3 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.sidebar-brand span {
+  font-size: 12px;
+  opacity: 0.6;
+  font-weight: 600;
+}
+
+.sidebar-user-mini {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.mini-avatar {
+  font-size: 24px;
+}
+
+.mini-info h4 {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.mini-xp {
+  font-size: 11px;
+  color: #94A3B8;
+  font-weight: 600;
+}
+
+.sidebar-nav-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  color: #94A3B8;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  background: none;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+}
+
+.sidebar-nav-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+}
+
+.sidebar-nav-item.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.nav-icon {
+  transition: transform 0.2s ease;
+}
+
+.sidebar-nav-item:hover .nav-icon {
+  transform: translateX(2px);
+}
+
+.active-indicator {
+  position: absolute;
+  left: 0;
+  width: 4px;
+  height: 20px;
+  background: #4F83EE;
+  border-radius: 0 4px 4px 0;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 20px;
+}
+
+.logout-btn {
+  color: #EF4444;
+}
+
+.logout-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #EF4444;
+}
+
+.sidebar-version {
+  font-size: 10px;
+  color: #475569;
+  font-weight: 800;
+  text-align: center;
+  margin-top: 16px;
+  letter-spacing: 1px;
+}
+
+/* Homework Styles */
+.homework-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.homework-card:hover {
+  transform: translateY(-4px);
+}
+
+.homework-card.done {
+  opacity: 0.7;
+}
+
+.hw-tag {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
 }
