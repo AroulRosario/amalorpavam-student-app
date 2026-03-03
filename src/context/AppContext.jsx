@@ -8,6 +8,7 @@ const HOMEWORK_DB_KEY = 'amal_homework_db'
 const NEWS_DB_KEY = 'amal_news_db'
 const LIVE_CLASSES_DB_KEY = 'amal_live_classes_db'
 const APP_CONFIG_DB_KEY = 'amal_app_config_db'
+const TIMETABLE_DB_KEY = 'amal_timetable_db'
 
 export function AppProvider({ children }) {
     // --- Auth & User State ---
@@ -81,16 +82,19 @@ export function AppProvider({ children }) {
             studentAppBroadcast: 'Welcome to the Amalorpavam Student Portal!'
         }
     })
+    const [timetable, setTimetable] = useState(() => {
+        const saved = localStorage.getItem(TIMETABLE_DB_KEY)
+        return saved ? JSON.parse(saved) : []
+    })
 
-    // Listen for cross-tab storage changes (Admin updates)
     useEffect(() => {
         const handleSync = (e) => {
             if (e.key === HOMEWORK_DB_KEY && e.newValue) setHomework(JSON.parse(e.newValue))
             if (e.key === NEWS_DB_KEY && e.newValue) setNews(JSON.parse(e.newValue))
             if (e.key === LIVE_CLASSES_DB_KEY && e.newValue) setLiveClasses(JSON.parse(e.newValue))
             if (e.key === APP_CONFIG_DB_KEY && e.newValue) setAppConfig(JSON.parse(e.newValue))
+            if (e.key === TIMETABLE_DB_KEY && e.newValue) setTimetable(JSON.parse(e.newValue))
 
-            // If student DB changes, update current user's profile info (fees, etc.)
             if (e.key === STUDENT_DB_KEY && e.newValue && user) {
                 const db = JSON.parse(e.newValue)
                 const updatedUser = db.find(s => s.id === user.id || s.roll === user.roll)
@@ -152,10 +156,16 @@ export function AppProvider({ children }) {
     const removeFromCart = (id) => setCart(prev => prev.filter(i => i.id !== id))
     const clearCart = () => setCart([])
 
+    // Filtered homework: only items assigned to this student
+    const myHomework = user ? homework.filter(h => !h.assignedTo || h.assignedTo.length === 0 || h.assignedTo.includes(user.id)) : homework
+    // Filtered timetable: only for this student's class
+    const myTimetable = user ? timetable.filter(t => t.class === user.class) : []
+
     return (
         <AppContext.Provider value={{
             user, login, logout, xp, level, streak, points, gainXp,
-            homework, toggleHomeworkStatus,
+            homework: myHomework, toggleHomeworkStatus,
+            timetable: myTimetable,
             news, liveClasses, appConfig,
             activePage, setActivePage,
             toasts, addToast,
