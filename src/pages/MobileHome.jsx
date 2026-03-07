@@ -1,15 +1,31 @@
 import { useApp } from '../context/AppContext'
 import { motion } from 'framer-motion'
 import {
-    Bell, Flame, TrendingUp, Play, Calendar, CheckCircle2,
-    ArrowRight, Award, Zap, Utensils
+    Bell, Play, Calendar, CheckCircle2,
+    Award, Utensils
 } from 'lucide-react'
 
 export default function MobileHome() {
-    const { user, xp, level, streak, news, appConfig, setActivePage, gainXp, addToast } = useApp()
+    const { user, xp, level, streak, notifications, setActivePage, gainXp, attendance } = useApp()
 
     const nextLevelXp = 2000
     const progress = (xp / nextLevelXp) * 100
+
+    // Filter unread or recent notifications
+    const recentNotifs = notifications.slice(-3).reverse()
+    const unreadCount = notifications.length
+
+    // Calculate Attendance %
+    const dates = Object.keys(attendance)
+    let presentDays = 0
+    let totalDays = 0
+    dates.forEach(d => {
+        if (attendance[d] && attendance[d][user?.roll]) {
+            totalDays++
+            if (attendance[d][user.roll] === 'Present') presentDays++
+        }
+    })
+    const attendancePercent = totalDays > 0 ? Math.round((presentDays / totalDays) * 100) : 100
 
     return (
         <div className="mobile-page">
@@ -20,161 +36,122 @@ export default function MobileHome() {
                         whileHover={{ scale: 1.1, rotate: 5 }}
                         style={{
                             width: 54, height: 54, borderRadius: 18,
-                            background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+                            background: 'linear-gradient(135deg, #1E50E2, #6366F1)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: 24, boxShadow: '0 10px 20px rgba(255, 165, 0, 0.2)'
+                            fontSize: 24, boxShadow: '0 10px 20px rgba(30, 80, 226, 0.2)', color: 'white'
                         }}
                     >
                         {user?.avatar || '🎓'}
                     </motion.div>
                     <div>
-                        <h1 style={{ fontSize: 22, fontWeight: 900, color: '#0A2463', margin: 0 }}>Hi, {user?.name.split(' ')[0]}!</h1>
+                        <h1 style={{ fontSize: 20, fontWeight: 900, color: '#0F172A', margin: 0 }}>Hi, {user?.name?.split(' ')[0]}!</h1>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
                             <span style={{
-                                background: '#1034A6', color: 'white', fontSize: 10,
+                                background: '#1E50E2', color: 'white', fontSize: 10,
                                 fontWeight: 900, padding: '2px 8px', borderRadius: 6, textTransform: 'uppercase'
                             }}>Level {level}</span>
-                            <span style={{ fontSize: 12, color: '#64748B', fontWeight: 700 }}>{xp} XP</span>
+                            <span style={{ fontSize: 12, color: '#64748B', fontWeight: 700 }}>{streak} Day Streak 🔥</span>
                         </div>
                     </div>
                 </div>
                 <div style={{ display: 'flex', gap: 12 }}>
-                    <motion.div
-                        whileTap={{ scale: 0.9 }}
-                        style={{
-                            background: 'rgba(255, 255, 255, 0.8)', padding: '10px 14px', borderRadius: 16,
-                            display: 'flex', alignItems: 'center', gap: 6, boxShadow: '0 8px 16px rgba(0,0,0,0.03)',
-                            border: '1.5px solid #F1F5F9'
-                        }}
-                    >
-                        <Flame size={18} color="#EF4444" fill="#EF4444" />
-                        <span style={{ fontWeight: 900, fontSize: 14 }}>{streak}</span>
-                    </motion.div>
                     <motion.button
                         whileTap={{ scale: 0.9 }}
+                        onClick={() => setActivePage('mobile-notifications')}
                         className="header-btn"
-                        style={{ background: 'white', borderRadius: 16, border: '1.5px solid #F1F5F9' }}
+                        style={{ background: 'white', borderRadius: 16, border: '1px solid #F1F5F9', position: 'relative' }}
                     >
-                        <Bell size={20} />
-                        <div className="notif-dot" />
+                        <Bell size={20} color="#0F172A" />
+                        {unreadCount > 0 && <div className="notif-dot" style={{ background: '#EF4444' }} />}
                     </motion.button>
                 </div>
             </header>
 
-            {/* XP Progress Hero */}
-            <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                className="premium-card"
-                style={{
-                    marginBottom: 32,
-                    background: 'linear-gradient(135deg, #1034A6, #4F83EE)',
-                    color: 'white',
-                    border: 'none',
-                    padding: '28px'
-                }}
-            >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
-                    <div>
-                        <div style={{ fontSize: 13, fontWeight: 800, opacity: 0.8, textTransform: 'uppercase', letterSpacing: 1 }}>Next Milestone</div>
-                        <h2 style={{ fontSize: 24, fontWeight: 900, margin: '4px 0 0' }}>{nextLevelXp - xp} XP to Level {level + 1}</h2>
+            {/* Attendance & Progress Stats */}
+            <div className="stats-grid" style={{ marginBottom: 24 }}>
+                <div className="premium-card" style={{ flex: 1, padding: 20 }}>
+                    <div style={{ fontSize: 12, fontWeight: 800, color: '#64748B', textTransform: 'uppercase', marginBottom: 8 }}>My Attendance</div>
+                    <div style={{ fontSize: 24, fontWeight: 900, color: '#0F172A' }}>{attendancePercent}%</div>
+                    <div style={{ height: 4, background: '#F1F5F9', borderRadius: 2, marginTop: 12, overflow: 'hidden' }}>
+                        <div style={{ width: `${attendancePercent}%`, height: '100%', background: '#10B981' }} />
                     </div>
-                    <Award size={32} opacity={0.5} />
                 </div>
-                <div style={{ height: 12, background: 'rgba(255,255,255,0.2)', borderRadius: 10, overflow: 'hidden' }}>
-                    <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${progress}%` }}
-                        transition={{ duration: 1.5, ease: 'easeOut' }}
-                        style={{ height: '100%', background: 'white', boxShadow: '0 0 20px rgba(255,255,255,0.5)' }}
-                    />
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 12, fontSize: 12, fontWeight: 800, opacity: 0.9 }}>
-                    <span>{xp} XP EARNED</span>
-                    <span>{progress.toFixed(0)}%</span>
-                </div>
-            </motion.div>
-
-            {/* Broadcast Ticker */}
-            <div style={{ marginBottom: 32 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                    <h3 style={{ fontSize: 18, fontWeight: 900, margin: 0, color: '#0A2463' }}>Academic Alerts</h3>
-                    <span onClick={() => addToast('Loading all academic alerts...', 'info')} style={{ fontSize: 12, color: '#1E50E2', fontWeight: 800, cursor: 'pointer' }}>View All</span>
-                </div>
-                <div className="premium-card" style={{ background: '#0A2463', color: 'white', padding: '16px 20px' }}>
-                    <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                        <Zap size={20} color="#F59E0B" fill="#F59E0B" />
-                        <p style={{ margin: 0, fontWeight: 700, fontSize: 14 }}>{appConfig.studentAppBroadcast}</p>
-                    </div>
+                <div className="premium-card" style={{ flex: 1, padding: 20 }}>
+                    <div style={{ fontSize: 12, fontWeight: 800, color: '#64748B', textTransform: 'uppercase', marginBottom: 8 }}>Total XP</div>
+                    <div style={{ fontSize: 24, fontWeight: 900, color: '#1E50E2' }}>{xp}</div>
+                    <div style={{ fontSize: 11, color: '#1E50E2', fontWeight: 800, marginTop: 8 }}>RANK #4 CLASS</div>
                 </div>
             </div>
 
-            {/* Quick Launch Grid */}
-            <h3 style={{ fontSize: 18, fontWeight: 900, marginBottom: 16, color: '#0A2463' }}>Quick Actions</h3>
-            <div className="stats-grid">
-                <motion.div
-                    onClick={() => setActivePage('mobile-learning')}
-                    className="premium-card"
-                    style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 12, cursor: 'pointer' }}
-                >
-                    <div style={{ width: 44, height: 44, borderRadius: 14, background: '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Play size={20} color="#1D4ED8" fill="#1D4ED8" />
-                    </div>
-                    <div style={{ fontWeight: 800, fontSize: 15 }}>Learning Hub</div>
-                </motion.div>
-                <motion.div
-                    onClick={() => setActivePage('mobile-homework')}
-                    className="premium-card"
-                    style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 12, cursor: 'pointer' }}
-                >
-                    <div style={{ width: 44, height: 44, borderRadius: 14, background: '#FDF2F8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <CheckCircle2 size={20} color="#DB2777" />
-                    </div>
-                    <div style={{ fontWeight: 800, fontSize: 15 }}>Homework</div>
-                </motion.div>
-                <motion.div
-                    onClick={() => setActivePage('mobile-canteen')}
-                    className="premium-card"
-                    style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 12, cursor: 'pointer' }}
-                >
-                    <div style={{ width: 44, height: 44, borderRadius: 14, background: '#FFF7ED', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Utensils size={20} color="#C2410C" />
-                    </div>
-                    <div style={{ fontWeight: 800, fontSize: 15 }}>Order Food</div>
-                </motion.div>
+            {/* Broadcast / Recent Notif */}
+            <div style={{ marginBottom: 32 }}>
+                <h3 style={{ fontSize: 18, fontWeight: 900, marginBottom: 16, color: '#0F172A' }}>Official Alerts</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {recentNotifs.length > 0 ? recentNotifs.map((n, i) => (
+                        <div key={i} className="premium-card" style={{ padding: '16px 20px', borderLeft: '4px solid #1E50E2' }}>
+                            <div style={{ display: 'flex', gap: 12 }}>
+                                <div style={{ fontSize: 18 }}>{n.type === 'Syllabus' ? '📚' : n.type === 'Fee' ? '💰' : '🔔'}</div>
+                                <div>
+                                    <div style={{ fontWeight: 800, fontSize: 14, color: '#0F172A' }}>{n.title}</div>
+                                    <div style={{ fontSize: 12, color: '#64748B', marginTop: 4 }}>{n.message}</div>
+                                </div>
+                            </div>
+                        </div>
+                    )) : (
+                        <div className="premium-card" style={{ background: '#F8FAFC', padding: '16px 20px', textAlign: 'center' }}>
+                            <p style={{ margin: 0, color: '#94A3B8', fontSize: 13, fontWeight: 600 }}>No new alerts today.</p>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Quick Launch */}
+            <h3 style={{ fontSize: 18, fontWeight: 900, marginBottom: 16, color: '#0F172A' }}>Shortcuts</h3>
+            <div className="stats-grid" style={{ marginBottom: 32 }}>
+                {[
+                    { id: 'mobile-learning', label: 'Learning', icon: Play, bg: '#E0E7FF', iconColor: '#4338CA' },
+                    { id: 'mobile-homework', label: 'Homework', icon: CheckCircle2, bg: '#FCE7F3', iconColor: '#BE185D' },
+                    { id: 'mobile-canteen', label: 'Canteen', icon: Utensils, bg: '#FFEDD5', iconColor: '#C2410C' },
+                    { id: 'mobile-timetable', label: 'Schedule', icon: Calendar, bg: '#DCFCE7', iconColor: '#15803D' },
+                ].map(item => (
+                    <motion.div
+                        key={item.id}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setActivePage(item.id)}
+                        className="premium-card"
+                        style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10, cursor: 'pointer', alignItems: 'center', padding: '16px' }}
+                    >
+                        <div style={{ width: 48, height: 48, borderRadius: 14, background: item.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <item.icon size={22} color={item.iconColor} />
+                        </div>
+                        <div style={{ fontWeight: 800, fontSize: 13, color: '#0F172A' }}>{item.label}</div>
+                    </motion.div>
+                ))}
             </div>
 
             {/* Daily Missions */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                <h3 style={{ fontSize: 18, fontWeight: 900, margin: 0, color: '#0A2463' }}>Daily Missions</h3>
-                <span onClick={() => addToast('Opening full missions board...', 'info')} style={{ fontSize: 12, color: '#1E50E2', fontWeight: 800, cursor: 'pointer' }}>View All</span>
+                <h3 style={{ fontSize: 18, fontWeight: 900, margin: 0, color: '#0F172A' }}>Daily Goals</h3>
+                <span style={{ fontSize: 12, color: '#1E50E2', fontWeight: 800 }}>View All</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {[
-                    { id: 1, task: 'Complete Unit 4 Quiz', xp: 150, done: false },
-                    { id: 2, task: 'Attend Live Physics Class', xp: 100, done: true },
-                    { id: 3, task: 'Solve 5 Math Problems', xp: 200, done: false },
+                    { id: 1, task: 'Complete Unit Quiz', xp: 150, done: false },
+                    { id: 2, task: 'Order Canteen Snack', xp: 50, done: true },
+                    { id: 3, task: 'Check Weekly Timetable', xp: 20, done: false },
                 ].map(m => (
                     <div key={m.id} className="premium-card" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
                             {m.done ? <CheckCircle2 size={24} color="#10B981" /> : <div style={{ width: 24, height: 24, borderRadius: 12, border: '2px solid #E2E8F0' }} />}
                             <div>
-                                <div style={{ fontWeight: 800, fontSize: 14, textDecoration: m.done ? 'line-through' : 'none', color: m.done ? '#94A3B8' : '#0F172A' }}>{m.task}</div>
-                                <div style={{ fontSize: 11, fontWeight: 700, color: '#1E50E2' }}>+{m.xp} XP</div>
+                                <div style={{ fontWeight: 800, fontSize: 14, color: m.done ? '#94A3B8' : '#0F172A', textDecoration: m.done ? 'line-through' : 'none' }}>{m.task}</div>
+                                <div style={{ fontSize: 11, fontWeight: 800, color: '#1E50E2' }}>+{m.xp} XP</div>
                             </div>
                         </div>
-                        {!m.done && (
-                            <button
-                                onClick={() => gainXp(m.xp)}
-                                style={{ border: 'none', background: 'none', color: '#1034A6', fontWeight: 800, fontSize: 12, cursor: 'pointer' }}
-                            >
-                                Claim
-                            </button>
-                        )}
+                        {!m.done && <button onClick={() => gainXp(m.xp)} style={{ background: 'none', border: 'none', color: '#1E50E2', fontWeight: 800, fontSize: 12 }}>Claim</button>}
                     </div>
                 ))}
             </div>
-
         </div>
     )
 }
