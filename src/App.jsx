@@ -75,10 +75,19 @@ export default function App() {
     }
 
     // Proper Auth Protection
-    const activeView = (user || activePage === 'login') ? pageContent[activePage] : <Login />
+    if (!user || activePage === 'login') {
+        return (
+            <div style={{ width: '100%', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+                <Login />
+                <Toast />
+            </div>
+        )
+    }
+
+    const activeView = pageContent[activePage]
 
     // Conditionally show Nav (Hide on ID and Player for full screen content)
-    const showNav = user && activePage !== 'login' && activePage !== 'digital-id' && activePage !== 'course-player'
+    const showNav = activePage !== 'digital-id' && activePage !== 'course-player'
 
     return (
         <div className="mobile-shell">

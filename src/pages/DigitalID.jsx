@@ -97,7 +97,7 @@ export default function DigitalID() {
                             <rect x="15" y="15" width="2" height="2" fill="currentColor" />
                         </svg>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, color: '#10B981', background: '#D1FAE5', padding: '10px 20px', borderRadius: 100, display: 'inline-flex' }}>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, color: '#10B981', background: '#D1FAE5', padding: '10px 20px', borderRadius: 100 }}>
                         <ShieldCheck size={18} />
                         <span style={{ fontSize: 12, fontWeight: 900 }}>AUTHENTICATED BY AHSS</span>
                     </div>
